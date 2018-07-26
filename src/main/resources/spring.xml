@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                            http://www.springframework.org/schema/beans/spring-beans.xsd
+                            http://www.springframework.org/schema/util
+                            http://www.springframework.org/schema/util/spring-util-3.2.xsd">
+
+    <import resource="loggers.xml"/>
+
+    <bean class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:client.properties</value>
+            </list>
+        </property>
+        <property name="ignoreResourceNotFound" value="true"/>
+        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+    </bean>
+
+    <bean id="client" class="Client" c:id="${id}" p:greeting="#{systemEnvironment['USERNAME'] ?: 'Hello!'}">
+        <!--<constructor-arg index="0">-->
+            <!--<value>${id}</value>-->
+        <!--</constructor-arg>-->
+        <constructor-arg index="1" value="${name}"/>
+        <!--<property name="greeting" value="${greeting}"/>-->
+    </bean>
+
+    <util:map id="loggerMap">
+        <entry key="INFO" value-ref="consoleEventLogger"/>
+        <entry key="ERROR" value-ref="combinedEventLogger"/>
+    </util:map>
+
+    <bean id="app" class="App" c:client-ref="client">
+        <!--<constructor-arg ref="client"/>-->
+        <constructor-arg ref="#{T(Event).isDay() ? 'fileEventLogger' : 'consoleEventLogger'}"/>
+        <constructor-arg ref="loggerMap"/>
+    </bean>
+
+    <bean id="event" class="Event" scope="prototype">
+        <constructor-arg>
+            <bean class="java.util.Date"/>
+        </constructor-arg>
+        <constructor-arg ref="dateFormat"/>
+    </bean>
+
+    <bean id="dateFormat" class="java.text.DateFormat" factory-method="getDateTimeInstance"/>
+
+    <bean id="combinedEventLogger" class="CombinedEventLogger">
+        <constructor-arg>
+            <list>
+                <ref bean="consoleEventLogger"/>
+                <ref bean="fileEventLogger"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+</beans>
