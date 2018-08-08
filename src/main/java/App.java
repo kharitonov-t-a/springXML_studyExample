@@ -21,6 +21,32 @@ public class App {
         this.loggers = loggers;
     }
 
+    public static void main(String[] args) {
+//        App app = new App();
+
+//        app.client = new Client("1", "John Smith");
+//        app.eventLogger = new ConsoleEventLogger();
+
+//        app.logEvent("Some event for user 1");
+
+        ctx = new ClassPathXmlApplicationContext("spring.xml", "aspects.xml");
+        ctx.registerShutdownHook();
+
+        App app = (App) ctx.getBean("app");
+        app.logEvents(ctx);
+//        app.logEvent(null, "Some event for user 1");
+
+//        StatisticsAspect statisticsAspect = ctx.getBean("statisticsAspect", StatisticsAspect.class);
+//
+//        for (Map.Entry entry : statisticsAspect.getCounter().entrySet()) {
+//            System.out.println(entry.getKey() + ", " + entry.getValue());
+//        }
+
+//        app.logEvent(EventType.ERROR, "Some event for user 2");
+//        app.logEvent(EventType.INFO, "Some event for user 3");
+        ctx.close();
+    }
+
     public void logEvent(EventType type, String msg) {
         EventLogger logger = loggers.get(type);
         //default eventLogger
@@ -34,33 +60,7 @@ public class App {
         logger.logEvent(event);
     }
 
-    public static void main(String[] args) {
-//        App app = new App();
-
-//        app.client = new Client("1", "John Smith");
-//        app.eventLogger = new ConsoleEventLogger();
-
-//        app.logEvent("Some event for user 1");
-
-        ctx = new ClassPathXmlApplicationContext("spring.xml", "aspects.xml");
-        ctx.registerShutdownHook();
-
-        logEvents(ctx);
-//        app.logEvent(null, "Some event for user 1");
-
-        StatisticsAspect statisticsAspect = ctx.getBean("statisticsAspect", StatisticsAspect.class);
-
-        for (Map.Entry entry : statisticsAspect.getCounter().entrySet()) {
-            System.out.println(entry.getKey() + ", " + entry.getValue());
-        }
-
-//        app.logEvent(EventType.ERROR, "Some event for user 2");
-//        app.logEvent(EventType.INFO, "Some event for user 3");
-//        ctx.close();
-    }
-
-
-    public static void logEvents(ApplicationContext ctx) {
+    public void logEvents(ApplicationContext ctx) {
         App app = ctx.getBean("app", App.class);
 
         Event event = ctx.getBean(Event.class);
