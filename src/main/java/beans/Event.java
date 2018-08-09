@@ -1,3 +1,5 @@
+package beans;
+
 import java.sql.Time;
 import java.text.DateFormat;
 import java.util.Calendar;

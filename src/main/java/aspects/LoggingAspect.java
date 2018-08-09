@@ -14,7 +14,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @Aspect
 public class LoggingAspect {
 
-//    private static Logger LOG = Logger.getLogger(LoggingAspect.class.getName());
+    private static Logger LOG = Logger.getLogger(LoggingAspect.class.getName());
 
     @Pointcut("execution(* *.logEvent(..))")
     private void allLogEventMethods() {
@@ -27,6 +27,7 @@ public class LoggingAspect {
     //    @Before("execution(* *.logEvent(..))")
     @Before("allLogEventMethods()")
     public void logBefore(JoinPoint joinPoint) {
+//        LOG.info()
         System.out.println("Before: " + joinPoint.getTarget().getClass().getSimpleName() +
                 " " +
                 joinPoint.getSignature().getName()

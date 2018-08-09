@@ -1,4 +1,7 @@
-import aspects.StatisticsAspect;
+import beans.Event;
+import beans.EventType;
+import loggers.EventLogger;
+import beans.Client;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

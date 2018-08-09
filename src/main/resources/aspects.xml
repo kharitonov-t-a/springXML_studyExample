@@ -8,12 +8,27 @@
        http://www.springframework.org/schema/aop/spring-aop.xsd">
 
 
-    <aop:aspectj-autoproxy />
+    <aop:aspectj-autoproxy/>
 
     <!--ASPECTS-->
 
 
     <bean id="loggingAspect" class="aspects.LoggingAspect"/>
     <bean id="statisticsAspect" class="aspects.StatisticsAspect"/>
+    <bean id="limitConsoleLogToFileLogAspect" class="aspects.LimitConsoleLogToFileLogAspect">
+        <constructor-arg index="0" value="${console.logger.max:2}"/>
+        <constructor-arg index="1" ref="fileEventLogger"/>
+    </bean>
+
+    <aop:config>
+        <aop:aspect id="consoleLimitAspect" ref="limitConsoleLogToFileLogAspect">
+
+            <aop:pointcut id="consoleLoggerEvent" expression="execution(* *.logEvent(beans.Event))
+                &amp;&amp; within(loggers.ConsoleEventLogger)
+                &amp;&amp; args(evnt)"/>
+
+            <aop:around pointcut-ref="consoleLoggerEvent" method="aroundLogEvent" arg-names="evnt"/>
+        </aop:aspect>
+    </aop:config>
 
 </beans>

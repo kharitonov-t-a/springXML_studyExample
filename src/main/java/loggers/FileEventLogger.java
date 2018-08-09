@@ -1,3 +1,7 @@
+package loggers;
+
+import beans.Event;
+import loggers.EventLogger;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;

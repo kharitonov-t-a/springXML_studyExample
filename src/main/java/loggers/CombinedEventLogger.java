@@ -1,3 +1,7 @@
+package loggers;
+
+import beans.Event;
+
 import java.util.Collection;
 
 public class CombinedEventLogger implements EventLogger {
